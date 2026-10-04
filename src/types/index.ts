@@ -1,5 +1,7 @@
 export type Lang = 'es' | 'en';
 
+export type ViewMode = 'home' | 'blog' | 'admin';
+
 export type LegalDocType = 'aviso-legal' | 'privacidad' | 'cookies' | 'descargo-medico' | null;
 
 export interface ContactFormData {
@@ -24,4 +26,18 @@ export interface StructuredInquiryRecord {
   preferredChannel: string;
   message: string;
   consentGranted: boolean;
+}
+
+export interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  category: 'Historia personal' | 'Tratamiento' | 'Consejos prácticos' | 'Málaga' | 'Personal Story' | 'Care & Treatment' | 'Practical Tips';
+  author: string;
+  date: string;
+  readTime: string;
+  lang: Lang;
+  isCustom?: boolean;
 }

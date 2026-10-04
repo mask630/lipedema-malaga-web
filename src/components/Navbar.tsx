@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Heart, ArrowRight } from 'lucide-react';
-import type { Lang } from '../types';
+import { Menu, X, Heart, ArrowRight, BookOpen } from 'lucide-react';
+import type { Lang, ViewMode } from '../types';
 import type { ContentSchema } from '../content/types';
 
 interface NavbarProps {
   content: ContentSchema['nav'];
   lang: Lang;
+  currentView: ViewMode;
   onToggleLang: (newLang: Lang) => void;
   onOpenContact: () => void;
+  onOpenBlog: () => void;
+  onGoHome: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   content,
   lang,
+  currentView,
   onToggleLang,
   onOpenContact,
+  onOpenBlog,
+  onGoHome,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -28,18 +34,15 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, []);
 
   const navLinks = [
-    { label: content.links.home, href: '#inicio', desc: 'Presentación y bienvenida' },
-    { label: content.links.whatIs, href: '#que-es-el-lipedema', desc: 'Definición, síntomas y comparativa' },
-    { label: content.links.treatment, href: '#tratamiento-conservador', desc: 'Nutrición, fisio DLM, compresión y apoyo' },
-    { label: content.links.surgery, href: '#cirugia-postoperatorio', desc: 'Técnica quirúrgica y postoperatorio' },
-    { label: content.links.quiz, href: '#test-orientativo', desc: 'Cuestionario de 5 preguntas' },
-    { label: content.links.about, href: '#quienes-somos', desc: 'Nuestra vocación de apoyo mutuo' },
-    { label: content.links.contact, href: '#contacta-con-nosotros', desc: 'Formulario de orientación personalizada' },
+    { label: content.links.home, href: '#inicio', desc: 'Presentación y bienvenida', action: onGoHome },
+    { label: content.links.blog, href: '#blog', desc: 'Anécdotas reales, trucos y experiencias', action: onOpenBlog, badge: 'Nuevo' },
+    { label: content.links.whatIs, href: '#que-es-el-lipedema', desc: 'Definición, síntomas y comparativa', action: onGoHome },
+    { label: content.links.treatment, href: '#tratamiento-conservador', desc: 'Nutrición, fisio DLM, compresión y apoyo', action: onGoHome },
+    { label: content.links.surgery, href: '#cirugia-postoperatorio', desc: 'Técnica quirúrgica y postoperatorio', action: onGoHome },
+    { label: content.links.quiz, href: '#test-orientativo', desc: 'Cuestionario de 5 preguntas', action: onGoHome },
+    { label: content.links.about, href: '#quienes-somos', desc: 'Nuestra vocación de apoyo mutuo', action: onGoHome },
+    { label: content.links.contact, href: '#contacta-con-nosotros', desc: 'Formulario de orientación personalizada', action: onGoHome },
   ];
-
-  const handleLinkClick = () => {
-    setIsMenuOpen(false);
-  };
 
   return (
     <>
@@ -53,13 +56,13 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             
-            {/* Logo and Brand Title (Clicking opens menu or goes to top) */}
+            {/* Logo and Brand Title (Clicking returns to Home or toggles menu) */}
             <div className="flex items-center gap-3">
               <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                onClick={onGoHome}
                 className="flex items-center gap-3 text-left group cursor-pointer"
-                title="Abrir menú de navegación"
-                aria-label="Abrir menú de navegación"
+                title="Ir a inicio de Lipedema Málaga"
+                aria-label="Ir a inicio de Lipedema Málaga"
               >
                 <div className="relative w-11 h-11 rounded-full overflow-hidden border border-[#D5C2B2] bg-[#FDFBF9] shadow-xs flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
                   <img
@@ -79,9 +82,24 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             </div>
 
-            {/* Right Actions: Language Switcher, Free Help CTA & Clean Menu Button */}
-            <div className="flex items-center gap-2.5 sm:gap-4">
+            {/* Right Actions: Direct Blog, Language Switcher, Free Help CTA & Clean Menu Button */}
+            <div className="flex items-center gap-2 sm:gap-3.5">
               
+              {/* Direct Blog Link Button */}
+              <button
+                onClick={onOpenBlog}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-xs font-semibold transition-all cursor-pointer border ${
+                  currentView === 'blog'
+                    ? 'bg-[#3A2421] text-white border-[#3A2421] shadow-xs'
+                    : 'bg-white/80 border-[#D8C7BA] text-[#5A4640] hover:bg-white hover:text-[#9B5347]'
+                }`}
+                title="Leer anécdotas y artículos"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-[#9B5347]" />
+                <span className="hidden xs:inline">{content.links.blog}</span>
+                <span className="xs:hidden">Blog</span>
+              </button>
+
               {/* Language Switcher */}
               <div className="inline-flex items-center p-1 rounded-full border border-[#D8C7BA] bg-white/80 shadow-2xs text-xs font-semibold">
                 <button
@@ -117,7 +135,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span>{content.freeHelp}</span>
               </button>
 
-              {/* Universal Menu Button (PC, Tablet & Mobile) */}
+              {/* Universal Menu Button */}
               <button
                 onClick={() => setIsMenuOpen(true)}
                 className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full border border-[#D5C2B2] bg-white hover:bg-[#F7EFE9] text-[#3A2421] text-xs sm:text-sm font-semibold transition-all shadow-2xs cursor-pointer group"
@@ -133,7 +151,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </header>
 
-      {/* Relaxed Full Navigation Overlay Drawer (For PC, Tablet & Mobile) */}
+      {/* Relaxed Full Navigation Overlay Drawer */}
       {isMenuOpen && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/45 backdrop-blur-xs animate-fadeIn">
           
@@ -167,13 +185,23 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <a
                     key={idx}
                     href={item.href}
-                    onClick={handleLinkClick}
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      if (item.action) item.action();
+                    }}
                     className="block p-3.5 rounded-2xl hover:bg-white hover:shadow-xs border border-transparent hover:border-[#E8DCD1] transition-all group"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-editorial text-xl font-bold text-[#3A2421] group-hover:text-[#9B5347] transition-colors">
-                        {item.label}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-editorial text-xl font-bold text-[#3A2421] group-hover:text-[#9B5347] transition-colors">
+                          {item.label}
+                        </span>
+                        {item.badge && (
+                          <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-md bg-[#F4E8DF] text-[#8A463B]">
+                            {item.badge}
+                          </span>
+                        )}
+                      </div>
                       <ArrowRight className="w-4 h-4 text-[#A18A82] group-hover:text-[#9B5347] group-hover:translate-x-1 transition-all" />
                     </div>
                     <p className="text-xs text-[#7B6861] mt-0.5">

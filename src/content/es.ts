@@ -12,6 +12,7 @@ export const contentEs: ContentSchema = {
       quiz: 'Test Orientativo',
       about: 'Quiénes Somos',
       contact: 'Contacto',
+      blog: 'Blog & Anécdotas',
     },
     freeHelp: 'Ayuda Gratuita',
     instagramLabel: 'Instagram @lipedemamalaga',

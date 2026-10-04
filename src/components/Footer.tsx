@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, ShieldAlert, ArrowUp } from 'lucide-react';
+import { Mail, ShieldAlert, ArrowUp, Lock } from 'lucide-react';
 import type { LegalDocType } from '../types';
 import type { ContentSchema } from '../content/types';
 
@@ -7,6 +7,8 @@ interface FooterProps {
   content: ContentSchema['footer'];
   onOpenDoc: (doc: LegalDocType) => void;
   onOpenContact: () => void;
+  onOpenBlog?: () => void;
+  onOpenAdmin?: () => void;
 }
 
 const InstagramIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
@@ -17,7 +19,13 @@ const InstagramIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
   </svg>
 );
 
-export const Footer: React.FC<FooterProps> = ({ content, onOpenDoc, onOpenContact }) => {
+export const Footer: React.FC<FooterProps> = ({
+  content,
+  onOpenDoc,
+  onOpenContact,
+  onOpenBlog,
+  onOpenAdmin,
+}) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -83,6 +91,15 @@ export const Footer: React.FC<FooterProps> = ({ content, onOpenDoc, onOpenContac
                 <a href="#inicio" className="hover:text-white transition-colors">
                   Inicio
                 </a>
+              </li>
+              <li>
+                <button
+                  onClick={onOpenBlog}
+                  className="hover:text-white transition-colors cursor-pointer text-left flex items-center gap-1.5"
+                >
+                  <span>Blog & Anécdotas</span>
+                  <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-[#412E2A] text-[#F2DFD7]">Nuevo</span>
+                </button>
               </li>
               <li>
                 <a href="#que-es-el-lipedema" className="hover:text-white transition-colors">
@@ -162,8 +179,18 @@ export const Footer: React.FC<FooterProps> = ({ content, onOpenDoc, onOpenContac
 
         {/* Bottom bar */}
         <div className="pt-8 border-t border-[#46322E] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#9E8A81]">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <span>{content.rights}</span>
+            {onOpenAdmin && (
+              <button
+                onClick={onOpenAdmin}
+                className="inline-flex items-center gap-1 text-[#8C766E] hover:text-[#D8C7BF] transition-colors cursor-pointer ml-2 text-[11px]"
+                title="Acceso para redactar artículos del blog"
+              >
+                <Lock className="w-3 h-3" />
+                <span>Gestión Blog</span>
+              </button>
+            )}
           </div>
 
           <button

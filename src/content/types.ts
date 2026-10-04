@@ -10,6 +10,7 @@ export interface ContentSchema {
       quiz: string;
       about: string;
       contact: string;
+      blog: string;
     };
     freeHelp: string;
     instagramLabel: string;
