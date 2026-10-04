@@ -1,8 +1,10 @@
 import React from 'react';
-import { Heart, Mail, ShieldAlert, ArrowUp } from 'lucide-react';
+import { Mail, ShieldAlert, ArrowUp } from 'lucide-react';
 import type { LegalDocType } from '../types';
+import type { ContentSchema } from '../content/types';
 
 interface FooterProps {
+  content: ContentSchema['footer'];
   onOpenDoc: (doc: LegalDocType) => void;
   onOpenContact: () => void;
 }
@@ -15,7 +17,7 @@ const InstagramIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
   </svg>
 );
 
-export const Footer: React.FC<FooterProps> = ({ onOpenDoc, onOpenContact }) => {
+export const Footer: React.FC<FooterProps> = ({ content, onOpenDoc, onOpenContact }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -42,14 +44,13 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDoc, onOpenContact }) => {
                   Lipedema Málaga
                 </span>
                 <span className="text-xs text-[#BAA59B] tracking-wider uppercase">
-                  Plataforma de información & red de apoyo
+                  lipedemamalaga.org
                 </span>
               </div>
             </div>
 
             <p className="text-xs sm:text-sm text-[#BBA59B] leading-relaxed max-w-sm">
-              Una red altruista de acompañamiento humano para personas diagnosticadas o con sospecha de lipedema en Málaga. 
-              Sin ánimo de lucro, sin intereses comerciales y con dedicación sincera.
+              {content.desc}
             </p>
 
             <div className="pt-2 flex items-center gap-3">
@@ -75,7 +76,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDoc, onOpenContact }) => {
           {/* Navigation Links */}
           <div className="lg:col-span-3 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#F2E5DD]">
-              Apartados de la Web
+              {content.navHeading}
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li>
@@ -122,7 +123,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDoc, onOpenContact }) => {
           {/* Legal and Medical Warning */}
           <div className="lg:col-span-4 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#F2E5DD]">
-              Marco Legal y Sanitario
+              {content.legalHeading}
             </h4>
             <div className="space-y-2 text-xs sm:text-sm flex flex-col items-start">
               <button
@@ -153,7 +154,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDoc, onOpenContact }) => {
             </div>
 
             <div className="pt-3 text-[11px] text-[#A69188] leading-relaxed border-t border-[#46322E]">
-              El contenido de esta web tiene fines exclusivamente orientativos y divulgativos. No constituye consejo médico ni diagnóstico facultativo vinculante.
+              {content.disclaimerNote}
             </div>
           </div>
 
@@ -162,18 +163,14 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDoc, onOpenContact }) => {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-[#46322E] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#9E8A81]">
           <div className="flex items-center gap-2">
-            <span>© {new Date().getFullYear()} Lipedema Málaga · lipedemamalaga.org</span>
-            <span>·</span>
-            <span className="inline-flex items-center gap-1 text-[#D39D93]">
-              Hecho con cariño y empatía <Heart className="w-3 h-3 fill-current" />
-            </span>
+            <span>{content.rights}</span>
           </div>
 
           <button
             onClick={scrollToTop}
             className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer"
           >
-            <span>Volver arriba</span>
+            <span>{content.backToTop}</span>
             <ArrowUp className="w-3.5 h-3.5" />
           </button>
         </div>

@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, MessageCircle, Heart, CheckCircle2, Send, Lock } from 'lucide-react';
+import { Mail, Heart, CheckCircle2, Send, Lock, Copy, Check, ExternalLink } from 'lucide-react';
 import type { ContactFormData } from '../types';
+import type { ContentSchema } from '../content/types';
 
 interface ContactSectionProps {
+  content: ContentSchema['contact'];
   initialMessage?: string;
   onOpenPrivacy: () => void;
 }
 
 export const ContactSection: React.FC<ContactSectionProps> = ({
+  content,
   initialMessage,
   onOpenPrivacy,
 }) => {
@@ -15,13 +18,18 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     name: '',
     email: '',
     phone: '',
-    stage: 'Sospecho que tengo lipedema',
+    city: '',
+    stage: content.fields.stageOptions[0] || 'Sospecho que tengo lipedema',
+    channel: content.fields.channelOptions[0] || 'Correo electrónico',
     message: '',
     privacyAccepted: false,
   });
 
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [formattedRecord, setFormattedRecord] = useState<string>('');
+  const [copied, setCopied] = useState(false);
+  const [recordId, setRecordId] = useState('');
 
   useEffect(() => {
     if (initialMessage) {
@@ -32,21 +40,78 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     }
   }, [initialMessage]);
 
+  const generateDatabaseRecord = (data: ContactFormData): { recordId: string; formatted: string; mailtoUrl: string } => {
+    const now = new Date();
+    const dateStr = now.toISOString().replace('T', ' ').substring(0, 16);
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+    const id = `LM-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${randomSuffix}`;
+
+    const formatted = `=======================================================
+FICHA DE REGISTRO Y CONSULTA - LIPEDEMA MÁLAGA
+Plataforma: lipedemamalaga.org
+=======================================================
+[REGISTRO]
+ID_CONSULTA: ${id}
+FECHA_HORA: ${dateStr} CET
+ESTADO: PENDIENTE_DE_RESPUESTA
+
+[DATOS_PERSONALES]
+NOMBRE_CLIENTE: ${data.name.trim()}
+EMAIL_CONTACTO: ${data.email.trim()}
+TELEFONO_WHATSAPP: ${data.phone ? data.phone.trim() : 'No facilitado'}
+LOCALIDAD_CIUDAD: ${data.city ? data.city.trim() : 'No indicada'}
+
+[CLASIFICACION_Y_PREFERENCIAS]
+MOMENTO_ACTUAL: ${data.stage}
+CANAL_PREFERENTE: ${data.channel}
+
+[DETALLE_DE_LA_CONSULTA]
+${data.message.trim()}
+
+[CONSENTIMIENTO_RGPD]
+CONSENTIMIENTO_EXPLICITO: SÍ
+FINALIDAD: ORIENTACION_Y_ACOMPANAMIENTO_GRATUITO
+DESTINO: info@lipedemamalaga.org
+=======================================================`;
+
+    const subject = `[Registro ${id}] Consulta de orientación - ${data.name.trim()}`;
+    const mailtoUrl = `mailto:info@lipedemamalaga.org?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(formatted)}`;
+
+    return { recordId: id, formatted, mailtoUrl };
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.name.trim() || !formData.email.trim()) {
-      setError('Por favor, indica tu nombre y un email de contacto.');
+      setError('Por favor, indica al menos tu nombre y tu correo electrónico.');
       return;
     }
 
     if (!formData.privacyAccepted) {
-      setError('Es necesario aceptar la política de privacidad para proteger tus datos confidenciales.');
+      setError('Es necesario marcar la casilla de política de privacidad para procesar tu consulta.');
       return;
     }
 
     setError(null);
+    const { recordId: newId, formatted, mailtoUrl } = generateDatabaseRecord(formData);
+    setRecordId(newId);
+    setFormattedRecord(formatted);
     setSubmitted(true);
+
+    // Try to trigger the default mail client automatically
+    try {
+      window.location.href = mailtoUrl;
+    } catch {
+      // Fallback handled in the UI
+    }
+  };
+
+  const handleCopyRecord = () => {
+    navigator.clipboard.writeText(formattedRecord).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    });
   };
 
   const handleResetForm = () => {
@@ -54,11 +119,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
       name: '',
       email: '',
       phone: '',
-      stage: 'Sospecho que tengo lipedema',
+      city: '',
+      stage: content.fields.stageOptions[0] || 'Sospecho que tengo lipedema',
+      channel: content.fields.channelOptions[0] || 'Correo electrónico',
       message: '',
       privacyAccepted: false,
     });
     setSubmitted(false);
+    setCopied(false);
+    setFormattedRecord('');
   };
 
   return (
@@ -67,22 +136,20 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           
-          {/* Left Column: Reassurance & Context */}
+          {/* Left Column: Context & Direct Contact */}
           <div className="lg:col-span-5">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#EAE0D6] text-[#864439] text-xs font-semibold uppercase tracking-wider mb-4">
               <Heart className="w-3.5 h-3.5" />
-              <span>Atención 100% Gratuita y Confidencial</span>
+              <span>{content.tag}</span>
             </div>
 
             <h2 className="font-editorial text-3xl sm:text-4xl md:text-5xl font-bold text-[#36221E] mb-5 leading-tight">
-              Contacta con nosotras: <br />
-              <span className="text-[#8A463B] font-normal italic">Estamos aquí para acompañarte</span>
+              {content.title} <br />
+              <span className="text-[#8A463B] font-normal italic">{content.titleItalic}</span>
             </h2>
 
             <p className="text-base text-[#5B4A43] leading-relaxed mb-6">
-              Rellena estos mínimos datos y una compañera de Lipedema Málaga se pondrá en contacto contigo de forma personalizada. 
-              No te compromete a nada, no intentamos venderte ningún producto ni tratamiento. 
-              Solo queremos ofrecerte una mano amiga y guiarte con información honesta en Málaga.
+              {content.subtitle}
             </p>
 
             {/* Confidence Cards */}
@@ -90,26 +157,26 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
               <div className="p-4 rounded-2xl bg-white border border-[#E6DCD1] shadow-2xs flex items-start gap-3">
                 <Lock className="w-5 h-5 text-[#8A463B] shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-sm font-semibold text-[#36221E]">Máxima Confidencialidad (RGPD)</h4>
-                  <p className="text-xs text-[#715F57] mt-0.5">Tus datos nunca se compartirán con empresas ni con fines comerciales de ningún tipo.</p>
+                  <h4 className="text-sm font-semibold text-[#36221E]">{content.cardPrivacyTitle}</h4>
+                  <p className="text-xs text-[#715F57] mt-0.5">{content.cardPrivacyDesc}</p>
                 </div>
               </div>
 
               <div className="p-4 rounded-2xl bg-white border border-[#E6DCD1] shadow-2xs flex items-start gap-3">
                 <Heart className="w-5 h-5 text-[#8A463B] shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-sm font-semibold text-[#36221E]">Sin Coste Alguno</h4>
-                  <p className="text-xs text-[#715F57] mt-0.5">Nuestra ayuda y orientación es totalmente voluntaria y altruista.</p>
+                  <h4 className="text-sm font-semibold text-[#36221E]">{content.cardFreeTitle}</h4>
+                  <p className="text-xs text-[#715F57] mt-0.5">{content.cardFreeDesc}</p>
                 </div>
               </div>
             </div>
 
-            {/* Direct Channels */}
+            {/* Direct Email Box */}
             <div className="p-6 rounded-3xl bg-[#F4EBE2] border border-[#DECFBF]">
-              <p className="text-xs font-bold text-[#7E4237] uppercase tracking-wider mb-3">
-                ¿Prefieres escribirnos directamente?
+              <p className="text-xs font-bold text-[#7E4237] uppercase tracking-wider mb-2">
+                {content.directTitle}
               </p>
-              <div className="space-y-3 text-sm">
+              <div className="space-y-2 text-sm">
                 <a
                   href="mailto:info@lipedemamalaga.org"
                   className="flex items-center gap-3 text-[#4A3933] hover:text-[#8A463B] transition-colors"
@@ -117,21 +184,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   <Mail className="w-4 h-4 text-[#8A463B]" />
                   <span className="font-medium">info@lipedemamalaga.org</span>
                 </a>
-                <a
-                  href="https://www.instagram.com/lipedemamalaga/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-[#4A3933] hover:text-[#8A463B] transition-colors"
-                >
-                  <MessageCircle className="w-4 h-4 text-[#E1306C]" />
-                  <span className="font-medium">Mensaje directo en Instagram: @lipedemamalaga</span>
-                </a>
+                <p className="text-xs text-[#7D6B64] pt-1">
+                  Revisamos los correos diariamente con total dedicación.
+                </p>
               </div>
             </div>
 
           </div>
 
-          {/* Right Column: Contact Form */}
+          {/* Right Column: Structured Form */}
           <div className="lg:col-span-7">
             <div className="bg-white rounded-3xl p-6 sm:p-10 border border-[#E6DCD1] shadow-[0_12px_40px_rgba(74,46,43,0.06)]">
               
@@ -140,10 +201,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   
                   <div className="border-b border-[#EFE5DB] pb-4 mb-2">
                     <h3 className="font-editorial text-2xl font-bold text-[#36221E]">
-                      Formulario de Orientación
+                      {content.formTitle}
                     </h3>
                     <p className="text-xs text-[#7A675F] mt-1">
-                      Cuéntanos en qué podemos ayudarte y te responderemos con calma y cariño.
+                      {content.formSubtitle}
                     </p>
                   </div>
 
@@ -157,81 +218,110 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-[#4F3E37] uppercase tracking-wider mb-1.5">
-                        Tu Nombre o Alias <span className="text-[#8A463B]">*</span>
+                        {content.fields.name} <span className="text-[#8A463B]">*</span>
                       </label>
                       <input
                         type="text"
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder="Ej. Laura"
+                        placeholder={content.fields.namePlaceholder}
                         className="w-full px-4 py-3 rounded-xl border border-[#DED0C3] focus:border-[#9B5347] focus:ring-1 focus:ring-[#9B5347] bg-[#FAF8F5] text-sm text-[#36221E] outline-none transition-all"
                       />
                     </div>
 
                     <div>
                       <label className="block text-xs font-semibold text-[#4F3E37] uppercase tracking-wider mb-1.5">
-                        Correo Electrónico <span className="text-[#8A463B]">*</span>
+                        {content.fields.email} <span className="text-[#8A463B]">*</span>
                       </label>
                       <input
                         type="email"
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder="tu-email@ejemplo.com"
+                        placeholder={content.fields.emailPlaceholder}
                         className="w-full px-4 py-3 rounded-xl border border-[#DED0C3] focus:border-[#9B5347] focus:ring-1 focus:ring-[#9B5347] bg-[#FAF8F5] text-sm text-[#36221E] outline-none transition-all"
                       />
                     </div>
                   </div>
 
-                  {/* Phone / WhatsApp (Optional) */}
-                  <div>
-                    <label className="block text-xs font-semibold text-[#4F3E37] uppercase tracking-wider mb-1.5">
-                      Teléfono o WhatsApp <span className="text-xs text-[#8A766F] font-normal lowercase">(opcional, si prefieres contacto por chat)</span>
-                    </label>
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="+34 600 00 00 00"
-                      className="w-full px-4 py-3 rounded-xl border border-[#DED0C3] focus:border-[#9B5347] focus:ring-1 focus:ring-[#9B5347] bg-[#FAF8F5] text-sm text-[#36221E] outline-none transition-all"
-                    />
+                  {/* Phone & City */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-[#4F3E37] uppercase tracking-wider mb-1.5">
+                        {content.fields.phone}
+                      </label>
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder={content.fields.phonePlaceholder}
+                        className="w-full px-4 py-3 rounded-xl border border-[#DED0C3] focus:border-[#9B5347] focus:ring-1 focus:ring-[#9B5347] bg-[#FAF8F5] text-sm text-[#36221E] outline-none transition-all"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-[#4F3E37] uppercase tracking-wider mb-1.5">
+                        {content.fields.city}
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.city}
+                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                        placeholder={content.fields.cityPlaceholder}
+                        className="w-full px-4 py-3 rounded-xl border border-[#DED0C3] focus:border-[#9B5347] focus:ring-1 focus:ring-[#9B5347] bg-[#FAF8F5] text-sm text-[#36221E] outline-none transition-all"
+                      />
+                    </div>
                   </div>
 
-                  {/* Stage selector */}
-                  <div>
-                    <label className="block text-xs font-semibold text-[#4F3E37] uppercase tracking-wider mb-1.5">
-                      ¿En qué momento o situación te encuentras?
-                    </label>
-                    <select
-                      value={formData.stage}
-                      onChange={(e) => setFormData({ ...formData, stage: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-[#DED0C3] focus:border-[#9B5347] focus:ring-1 focus:ring-[#9B5347] bg-[#FAF8F5] text-sm text-[#36221E] outline-none transition-all cursor-pointer"
-                    >
-                      <option value="Sospecho que tengo lipedema">Sospecho que tengo lipedema y no sé qué pasos dar</option>
-                      <option value="Diagnóstico reciente">Tengo diagnóstico reciente y necesito orientación</option>
-                      <option value="Tratamiento conservador en Málaga">Quiero información sobre tratamiento conservador en Málaga</option>
-                      <option value="Cirugía y postoperatorio">Estoy valorando cirugía o buscando apoyo en el postoperatorio</option>
-                      <option value="Solo necesito hablar o desahogarme">Solo necesito hablar con alguien que comprenda mi situación</option>
-                      <option value="Otra consulta">Otra duda o sugerencia</option>
-                    </select>
+                  {/* Stage and Channel Selectors */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-[#4F3E37] uppercase tracking-wider mb-1.5">
+                        {content.fields.stage}
+                      </label>
+                      <select
+                        value={formData.stage}
+                        onChange={(e) => setFormData({ ...formData, stage: e.target.value })}
+                        className="w-full px-4 py-3 rounded-xl border border-[#DED0C3] focus:border-[#9B5347] focus:ring-1 focus:ring-[#9B5347] bg-[#FAF8F5] text-xs sm:text-sm text-[#36221E] outline-none transition-all cursor-pointer"
+                      >
+                        {content.fields.stageOptions.map((opt, i) => (
+                          <option key={i} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-[#4F3E37] uppercase tracking-wider mb-1.5">
+                        {content.fields.channel}
+                      </label>
+                      <select
+                        value={formData.channel}
+                        onChange={(e) => setFormData({ ...formData, channel: e.target.value })}
+                        className="w-full px-4 py-3 rounded-xl border border-[#DED0C3] focus:border-[#9B5347] focus:ring-1 focus:ring-[#9B5347] bg-[#FAF8F5] text-xs sm:text-sm text-[#36221E] outline-none transition-all cursor-pointer"
+                      >
+                        {content.fields.channelOptions.map((opt, i) => (
+                          <option key={i} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
 
                   {/* Message */}
                   <div>
                     <label className="block text-xs font-semibold text-[#4F3E37] uppercase tracking-wider mb-1.5">
-                      Tu mensaje o preguntas <span className="text-xs text-[#8A766F] font-normal lowercase">(puedes escribir todo lo que sientas)</span>
+                      {content.fields.message}
                     </label>
                     <textarea
                       rows={4}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder="Cuéntanos brevemente qué te preocupa o qué información necesitas sobre Málaga..."
+                      placeholder={content.fields.messagePlaceholder}
                       className="w-full px-4 py-3 rounded-xl border border-[#DED0C3] focus:border-[#9B5347] focus:ring-1 focus:ring-[#9B5347] bg-[#FAF8F5] text-sm text-[#36221E] outline-none transition-all resize-none"
                     />
                   </div>
 
-                  {/* Privacy Checkbox (Strict RGPD) */}
+                  {/* Privacy Checkbox */}
                   <div className="flex items-start gap-3 pt-2">
                     <input
                       type="checkbox"
@@ -241,15 +331,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       className="mt-1 w-4 h-4 text-[#9B5347] rounded border-[#CDBEAF] focus:ring-[#9B5347] cursor-pointer"
                     />
                     <label htmlFor="privacyCheck" className="text-xs text-[#63524A] leading-relaxed cursor-pointer">
-                      He leído y acepto la{' '}
+                      {content.fields.privacyCheckbox}
                       <button
                         type="button"
                         onClick={onOpenPrivacy}
                         className="text-[#9B5347] underline underline-offset-2 font-medium hover:text-[#7A3E34] cursor-pointer"
                       >
-                        Política de Privacidad
+                        {content.fields.privacyLink}
                       </button>
-                      . Entiendo que mis datos serán tratados de manera confidencial exclusivamente para responderme y orientarme sin fines comerciales.
+                      {content.fields.privacySuffix}
                     </label>
                   </div>
 
@@ -259,41 +349,65 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     className="w-full py-3.5 px-6 rounded-full bg-[#9B5347] hover:bg-[#864439] text-white font-semibold text-sm transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer mt-4"
                   >
                     <Send className="w-4 h-4" />
-                    <span>Enviar solicitud de orientación gratuita</span>
+                    <span>{content.fields.submitBtn}</span>
                   </button>
 
                   <p className="text-center text-[11px] text-[#86746C] pt-1">
-                    🔒 Tus datos están protegidos conforme al RGPD europeo y la LOPDGDD española.
+                    {content.fields.securityNote}
                   </p>
 
                 </form>
               ) : (
-                /* Success View */
-                <div className="text-center py-10 animate-fadeIn">
-                  <div className="w-16 h-16 rounded-full bg-[#F4E8DF] text-[#9B5347] flex items-center justify-center mx-auto mb-5 shadow-xs">
-                    <CheckCircle2 className="w-10 h-10" />
+                /* Structured Database Confirmation View */
+                <div className="py-4 animate-fadeIn">
+                  <div className="w-14 h-14 rounded-full bg-[#F4E8DF] text-[#9B5347] flex items-center justify-center mx-auto mb-4 shadow-xs">
+                    <CheckCircle2 className="w-8 h-8" />
                   </div>
 
-                  <h3 className="font-editorial text-3xl font-bold text-[#36221E] mb-3">
-                    ¡Mensaje recibido con cariño, {formData.name}!
+                  <h3 className="font-editorial text-2xl sm:text-3xl font-bold text-[#36221E] text-center mb-2">
+                    {content.success.title}
                   </h3>
 
-                  <p className="text-sm text-[#5B4942] leading-relaxed max-w-md mx-auto mb-6">
-                    Una compañera de Lipedema Málaga revisará tu mensaje y te responderá lo antes posible a 
-                    <strong className="text-[#36221E]"> {formData.email}</strong>. 
-                    Recuerda que no estás sola en este camino.
+                  <p className="text-xs sm:text-sm text-[#5B4942] text-center max-w-md mx-auto mb-6">
+                    {content.success.desc}
                   </p>
 
-                  <div className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#E7DBD0] max-w-sm mx-auto text-xs text-[#715E56] mb-8">
-                    ¿Es urgente o prefieres escribirnos ya por Instagram? Puedes escribirnos a @lipedemamalaga o info@lipedemamalaga.org en cualquier momento.
+                  {/* Formatted Code Block for Database Storage */}
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between pb-2 text-xs font-semibold text-[#6C5750]">
+                      <span>{content.success.summaryHeading} <code className="bg-[#EFE4DA] px-2 py-0.5 rounded text-[#36221E]">{recordId}</code></span>
+                      <button
+                        onClick={handleCopyRecord}
+                        className="inline-flex items-center gap-1.5 text-xs text-[#9B5347] hover:text-[#793A30] font-semibold cursor-pointer"
+                      >
+                        {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
+                        <span>{copied ? content.success.copiedNotice : content.success.copyBtn}</span>
+                      </button>
+                    </div>
+
+                    <pre className="p-4 rounded-2xl bg-[#2A1D1A] text-[#EFE3DB] font-mono text-[11px] sm:text-xs overflow-x-auto border border-[#48332E] max-h-60 leading-relaxed">
+                      {formattedRecord}
+                    </pre>
                   </div>
 
-                  <button
-                    onClick={handleResetForm}
-                    className="px-6 py-2.5 rounded-full border border-[#D5C2B2] hover:bg-[#FAF7F2] text-[#4A3A34] text-xs font-semibold transition-all cursor-pointer"
-                  >
-                    Enviar otra consulta
-                  </button>
+                  {/* Actions to ensure email is sent */}
+                  <div className="flex flex-col sm:flex-row items-center gap-3">
+                    <a
+                      href={`mailto:info@lipedemamalaga.org?subject=${encodeURIComponent(`[Registro ${recordId}] Consulta Lipedema Málaga - ${formData.name}`)}&body=${encodeURIComponent(formattedRecord)}`}
+                      className="w-full sm:flex-1 py-3 px-4 rounded-full bg-[#9B5347] hover:bg-[#864439] text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 shadow-sm text-center"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      <span>{content.success.openEmailBtn}</span>
+                    </a>
+
+                    <button
+                      onClick={handleResetForm}
+                      className="w-full sm:w-auto px-5 py-3 rounded-full border border-[#D5C2B2] hover:bg-[#FAF7F2] text-[#4A3A34] text-xs font-semibold transition-all cursor-pointer"
+                    >
+                      {content.success.anotherBtn}
+                    </button>
+                  </div>
+
                 </div>
               )}
 
