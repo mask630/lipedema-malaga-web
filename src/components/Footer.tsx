@@ -42,7 +42,7 @@ export const Footer: React.FC<FooterProps> = ({
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full overflow-hidden bg-white p-1 shrink-0">
                 <img
-                  src="/images/logo-lipedema-malaga.png"
+                  src="./images/logo-lipedema-malaga.png"
                   alt="Logo Lipedema Málaga"
                   className="w-full h-full object-cover"
                 />

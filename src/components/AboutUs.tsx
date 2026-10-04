@@ -80,7 +80,7 @@ export const AboutUs: React.FC<AboutUsProps> = ({ content, onOpenContact }) => {
             <div className="relative w-64 h-64 sm:w-80 sm:h-80 rounded-full border-2 border-[#DEC9BB] p-3 flex items-center justify-center bg-[#FDFBF9] shadow-[0_15px_35px_rgba(74,46,43,0.08)]">
               <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-[#FAF6F0] p-6">
                 <img
-                  src="/images/logo-lipedema-malaga.png"
+                  src="./images/logo-lipedema-malaga.png"
                   alt="Logotipo Oficial Lipedema Málaga"
                   className="w-full h-full object-contain"
                 />

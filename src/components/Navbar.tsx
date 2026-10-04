@@ -66,7 +66,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <div className="relative w-11 h-11 rounded-full overflow-hidden border border-[#D5C2B2] bg-[#FDFBF9] shadow-xs flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
                   <img
-                    src="/images/logo-lipedema-malaga.png"
+                    src="./images/logo-lipedema-malaga.png"
                     alt="Logo Lipedema Málaga"
                     className="w-full h-full object-cover"
                   />
@@ -162,7 +162,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="flex items-center justify-between pb-6 border-b border-[#E8DCD1] mb-6">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full overflow-hidden border border-[#D5C2B2]">
-                    <img src="/images/logo-lipedema-malaga.png" alt="Logo" className="w-full h-full object-cover" />
+                    <img src="./images/logo-lipedema-malaga.png" alt="Logo" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h3 className="font-editorial text-xl font-bold text-[#36221E]">Lipedema Málaga</h3>

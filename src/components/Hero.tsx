@@ -94,7 +94,7 @@ export const Hero: React.FC<HeroProps> = ({ content, onOpenContact }) => {
               <div className="relative sm:absolute -top-4 sm:-top-8 sm:-left-4 w-full sm:w-72 bg-white p-3.5 pb-5 rounded-2xl shadow-[0_12px_30px_rgba(74,46,43,0.08)] border border-[#EBE1D8] transform sm:-rotate-4 hover:rotate-0 transition-transform duration-300 z-10 mb-6 sm:mb-0">
                 <div className="relative aspect-square overflow-hidden rounded-xl bg-[#F6EFE9] mb-3">
                   <img
-                    src="/images/que-es-el-lipedema.png"
+                    src="./images/que-es-el-lipedema.png"
                     alt={content.polaroid1Title}
                     className="w-full h-full object-cover"
                   />
@@ -109,7 +109,7 @@ export const Hero: React.FC<HeroProps> = ({ content, onOpenContact }) => {
               <div className="relative sm:ml-24 sm:mt-12 w-full sm:w-76 bg-white p-3.5 pb-5 rounded-2xl shadow-[0_18px_36px_rgba(74,46,43,0.11)] border border-[#E3D6C9] transform sm:rotate-3 hover:rotate-0 transition-transform duration-300 z-20">
                 <div className="relative aspect-square overflow-hidden rounded-xl bg-[#F6EFE9] mb-3">
                   <img
-                    src="/images/crees-que-tienes-lipedema.jpg"
+                    src="./images/crees-que-tienes-lipedema.jpg"
                     alt={content.polaroid2Title}
                     className="w-full h-full object-cover"
                   />
