@@ -16,6 +16,18 @@ export const contentEs: ContentSchema = {
     },
     freeHelp: 'Ayuda Gratuita',
     instagramLabel: 'Instagram @lipedemamalaga',
+    languageLabel: 'Idioma',
+    ctaForm: 'Rellenar ficha de consulta',
+    linkDescs: {
+      home: 'Volver al principio',
+      blog: 'Historias reales y consejos del día a día',
+      whatIs: 'Síntomas, diferencias y grados',
+      treatment: 'Nutrición, fisioterapia, compresión y apoyo',
+      surgery: 'Qué saber antes y después de operarse',
+      quiz: '5 preguntas para orientarte',
+      about: 'Quiénes somos y por qué existimos',
+      contact: 'Cuéntanos tu caso, es gratis',
+    },
   },
   hero: {
     titlePrefix: 'No estás sola. ',
@@ -124,6 +136,24 @@ export const contentEs: ContentSchema = {
         desc: 'Aparición de pliegues o lóbulos de grasa pronunciados en muslos, rodillas o pantorrillas que pueden sobrecargar las articulaciones y limitar el movimiento.',
         action: 'Abordaje conservador intensivo y valoración quirúrgica si hay afectación biomecánica.',
       },
+      {
+        tag: 'Complicación',
+        title: 'Lipolinfedema (a veces llamado «Grado IV»)',
+        desc: 'Cuando, además del lipedema, el sistema linfático se sobrecarga y aparece un linfedema secundario. A diferencia del lipedema puro, la hinchazón puede llegar al dorso del pie o de la mano, y el edema deja más marca al presionar.',
+        action: 'Requiere seguimiento por especialista en linfología: terapia descongestiva completa y compresión adaptada.',
+      },
+    ],
+    stagesNote:
+      'Importante: el grado describe el aspecto de la piel y el volumen, no cuánto duele. Hay mujeres en grado I con mucho dolor y mujeres en grado III con poco. Las guías médicas más recientes dan más peso a los síntomas (dolor, pesadez, hematomas) que al grado.',
+    typesTitle: 'Tipos según la zona afectada',
+    typesIntro:
+      'Además del grado, el lipedema se describe según dónde se acumula el tejido. Es frecuente que una misma persona tenga varios tipos a la vez.',
+    types: [
+      { title: 'Tipo I', desc: 'Glúteos y caderas.' },
+      { title: 'Tipo II', desc: 'De las caderas a las rodillas (muslos).' },
+      { title: 'Tipo III', desc: 'De las caderas a los tobillos (pierna completa).' },
+      { title: 'Tipo IV', desc: 'Brazos, normalmente junto a algún tipo de piernas.' },
+      { title: 'Tipo V', desc: 'Solo pantorrillas (parte inferior de la pierna).' },
     ],
   },
   treatment: {

@@ -16,6 +16,18 @@ export const contentEn: ContentSchema = {
     },
     freeHelp: 'Free Support',
     instagramLabel: 'Instagram @lipedemamalaga',
+    languageLabel: 'Language',
+    ctaForm: 'Fill in the inquiry form',
+    linkDescs: {
+      home: 'Back to the top',
+      blog: 'Real stories and everyday tips',
+      whatIs: 'Symptoms, differences and stages',
+      treatment: 'Nutrition, physio, compression and support',
+      surgery: 'What to know before and after surgery',
+      quiz: '5 questions to help you reflect',
+      about: 'Who we are and why we exist',
+      contact: 'Tell us about your case — it is free',
+    },
   },
   hero: {
     titlePrefix: 'You are not alone. ',
@@ -124,6 +136,24 @@ export const contentEn: ContentSchema = {
         desc: 'Marked lobules and large fat overhangs around thighs, knees, or calves that can impair mobility and joint alignment.',
         action: 'Intensive conservative protocol and assessment for specialized decompression surgery if biomechanics are hindered.',
       },
+      {
+        tag: 'Complication',
+        title: 'Lipo-lymphedema (sometimes called "Stage IV")',
+        desc: 'When, on top of lipedema, the lymphatic system becomes overloaded and secondary lymphedema develops. Unlike pure lipedema, swelling may reach the top of the foot or hand, and pressing leaves a deeper mark.',
+        action: 'Needs follow-up by a lymphology specialist: complete decongestive therapy and adapted compression.',
+      },
+    ],
+    stagesNote:
+      'Important: the stage describes skin appearance and volume, not how much it hurts. Some women in Stage I have a lot of pain and some in Stage III have little. Recent medical guidelines give more weight to symptoms (pain, heaviness, bruising) than to the stage.',
+    typesTitle: 'Types by affected area',
+    typesIntro:
+      'Besides the stage, lipedema is described by where the tissue builds up. It is common to have more than one type at the same time.',
+    types: [
+      { title: 'Type I', desc: 'Buttocks and hips.' },
+      { title: 'Type II', desc: 'Hips down to the knees (thighs).' },
+      { title: 'Type III', desc: 'Hips down to the ankles (whole leg).' },
+      { title: 'Type IV', desc: 'Arms, usually alongside a leg type.' },
+      { title: 'Type V', desc: 'Calves only (lower leg).' },
     ],
   },
   treatment: {

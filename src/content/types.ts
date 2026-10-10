@@ -14,6 +14,18 @@ export interface ContentSchema {
     };
     freeHelp: string;
     instagramLabel: string;
+    languageLabel: string;
+    ctaForm: string;
+    linkDescs: {
+      home: string;
+      blog: string;
+      whatIs: string;
+      treatment: string;
+      surgery: string;
+      quiz: string;
+      about: string;
+      contact: string;
+    };
   };
   hero: {
     titlePrefix: string;
@@ -78,6 +90,10 @@ export interface ContentSchema {
       desc: string;
       action: string;
     }>;
+    stagesNote: string;
+    typesTitle: string;
+    typesIntro: string;
+    types: Array<{ title: string; desc: string }>;
   };
   treatment: {
     tag: string;

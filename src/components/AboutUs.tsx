@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Users, MapPin, Sparkles, Mail, Shield } from 'lucide-react';
+import { Heart, Users, MapPin, Sparkles, Shield } from 'lucide-react';
 import type { ContentSchema } from '../content/types';
 
 interface AboutUsProps {
@@ -8,14 +8,6 @@ interface AboutUsProps {
 }
 
 const icons = [Heart, Shield, MapPin, Sparkles];
-
-const InstagramIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
-  </svg>
-);
 
 export const AboutUs: React.FC<AboutUsProps> = ({ content, onOpenContact }) => {
   return (
@@ -46,27 +38,11 @@ export const AboutUs: React.FC<AboutUsProps> = ({ content, onOpenContact }) => {
               </p>
             </div>
 
-            {/* Direct Connect Buttons */}
+            {/* Direct Connect Button to Consultation Form */}
             <div className="flex flex-wrap items-center gap-3 mt-8">
-              <a
-                href="https://www.instagram.com/lipedemamalaga/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FAF7F2] hover:bg-[#F2E8DF] border border-[#D5C2B2] text-[#473630] text-sm font-semibold transition-all shadow-2xs"
-              >
-                <InstagramIcon className="w-4 h-4 text-[#E1306C]" />
-                <span>{content.btnInstagram}</span>
-              </a>
-              <a
-                href="mailto:info@lipedemamalaga.org"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FAF7F2] hover:bg-[#F2E8DF] border border-[#D5C2B2] text-[#473630] text-sm font-semibold transition-all shadow-2xs"
-              >
-                <Mail className="w-4 h-4 text-[#8A463B]" />
-                <span>info@lipedemamalaga.org</span>
-              </a>
               <button
                 onClick={onOpenContact}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#9B5347] hover:bg-[#864439] text-white text-sm font-semibold transition-all shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#9B5347] hover:bg-[#864439] text-white text-sm font-semibold transition-all shadow-xs hover:shadow-sm cursor-pointer"
               >
                 <Heart className="w-4 h-4 fill-current" />
                 <span>{content.btnContact}</span>

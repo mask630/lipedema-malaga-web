@@ -59,10 +59,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Logo and Brand Title (Clicking returns to Home or toggles menu) */}
             <div className="flex items-center gap-3">
               <button
-                onClick={onGoHome}
+                onClick={() => {
+                  if (window.innerWidth < 768) {
+                    setIsMenuOpen((prev) => !prev);
+                  } else {
+                    onGoHome();
+                  }
+                }}
                 className="flex items-center gap-3 text-left group cursor-pointer"
-                title="Ir a inicio de Lipedema Málaga"
-                aria-label="Ir a inicio de Lipedema Málaga"
+                title="Lipedema Málaga - Menú de navegación"
+                aria-label="Lipedema Málaga - Menú de navegación"
               >
                 <div className="relative w-11 h-11 rounded-full overflow-hidden border border-[#D5C2B2] bg-[#FDFBF9] shadow-xs flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
                   <img
@@ -82,8 +88,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             </div>
 
-            {/* Right Actions: Direct Blog, Language Switcher, Free Help CTA & Clean Menu Button */}
-            <div className="flex items-center gap-2 sm:gap-3.5">
+            {/* Right Actions: Direct Blog, Language Switcher & Clean Menu Button */}
+            <div className="flex items-center gap-2 sm:gap-3">
               
               {/* Direct Blog Link Button */}
               <button
@@ -126,19 +132,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </div>
 
-              {/* Free Help CTA (Visible in desktop & tablet) */}
-              <button
-                onClick={onOpenContact}
-                className="hidden sm:inline-flex items-center gap-2 bg-[#9B5347] hover:bg-[#864439] text-[#FAF7F2] px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all shadow-xs hover:shadow-sm cursor-pointer"
-              >
-                <Heart className="w-3.5 h-3.5 fill-current text-[#FDEBE8]" />
-                <span>{content.freeHelp}</span>
-              </button>
-
               {/* Universal Menu Button */}
               <button
                 onClick={() => setIsMenuOpen(true)}
-                className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full border border-[#D5C2B2] bg-white hover:bg-[#F7EFE9] text-[#3A2421] text-xs sm:text-sm font-semibold transition-all shadow-2xs cursor-pointer group"
+                className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full border border-[#D5C2B2] bg-[#FAF7F2] hover:bg-[#F2E7DC] text-[#3A2421] text-xs sm:text-sm font-semibold transition-all shadow-2xs cursor-pointer group"
                 aria-label="Abrir menú"
               >
                 <Menu className="w-4 h-4 text-[#8A463B] group-hover:rotate-90 transition-transform duration-300" />

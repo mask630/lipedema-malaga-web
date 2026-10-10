@@ -166,19 +166,60 @@ export const WhatIsLipedema: React.FC<WhatIsLipedemaProps> = ({ content }) => {
 
         {/* Tab 3: Grados y Tipos */}
         {activeTab === 'grados' && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fadeIn">
-            {content.stages.map((stage, idx) => (
-              <div key={idx} className="bg-[#FAF7F2] p-6 rounded-3xl border border-[#E9DFD5] flex flex-col justify-between">
-                <div>
-                  <span className="text-xs font-bold text-[#8A463B] uppercase tracking-wider">{stage.tag}</span>
-                  <h4 className="font-editorial text-2xl font-bold text-[#36221E] mt-1 mb-3">{stage.title}</h4>
-                  <p className="text-sm text-[#5C4B44] leading-relaxed mb-4">{stage.desc}</p>
+          <div className="space-y-10 animate-fadeIn">
+            {/* Stages Grid (4 stages including Lipolinfedema) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+              {content.stages.map((stage, idx) => (
+                <div key={idx} className="bg-[#FAF7F2] p-6 rounded-3xl border border-[#E9DFD5] flex flex-col justify-between shadow-2xs hover:shadow-xs transition-shadow">
+                  <div>
+                    <span className="text-xs font-bold text-[#8A463B] uppercase tracking-wider">{stage.tag}</span>
+                    <h4 className="font-editorial text-xl sm:text-2xl font-bold text-[#36221E] mt-1 mb-3">{stage.title}</h4>
+                    <p className="text-xs sm:text-sm text-[#5C4B44] leading-relaxed mb-4">{stage.desc}</p>
+                  </div>
+                  <div className="bg-white p-3.5 rounded-xl border border-[#E4D9CE] text-xs text-[#715F58]">
+                    <span className="font-semibold text-[#8A463B] block mb-0.5">Orientación:</span>
+                    {stage.action}
+                  </div>
                 </div>
-                <div className="bg-white p-3.5 rounded-xl border border-[#E4D9CE] text-xs text-[#715F58]">
-                  {stage.action}
+              ))}
+            </div>
+
+            {/* Reassuring Clinical Note */}
+            {content.stagesNote && (
+              <div className="p-5 rounded-2xl bg-white border border-[#E5DACF] flex items-start gap-3.5 shadow-2xs">
+                <Info className="w-5 h-5 text-[#8A463B] shrink-0 mt-0.5" />
+                <p className="text-xs sm:text-sm text-[#5B4A43] leading-relaxed">
+                  {content.stagesNote}
+                </p>
+              </div>
+            )}
+
+            {/* Anatomical Types (Types I to V) */}
+            {content.types && content.types.length > 0 && (
+              <div className="pt-4 border-t border-[#EAE0D7]">
+                <div className="mb-6">
+                  <h3 className="font-editorial text-2xl font-bold text-[#36221E] mb-1">
+                    {content.typesTitle}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[#6F5E57]">
+                    {content.typesIntro}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+                  {content.types.map((typeItem, idx) => (
+                    <div key={idx} className="bg-white p-4 rounded-2xl border border-[#EAE0D7] shadow-2xs">
+                      <span className="px-2.5 py-0.5 rounded-full bg-[#F6ECE4] text-[#8A463B] text-[11px] font-bold uppercase tracking-wider inline-block mb-2">
+                        {typeItem.title}
+                      </span>
+                      <p className="text-xs text-[#55453F] leading-snug">
+                        {typeItem.desc}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
+            )}
           </div>
         )}
 
