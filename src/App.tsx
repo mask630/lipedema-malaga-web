@@ -14,17 +14,94 @@ import { CookieBanner } from './components/CookieBanner';
 import { LegalModals } from './components/LegalModals';
 import { BlogView } from './components/BlogView';
 import { BlogAdmin } from './components/BlogAdmin';
+import { AccessibilityModal } from './components/AccessibilityModal';
 import { initialBlogPosts } from './content/blogPosts';
 import { contentEs } from './content/es';
 import { contentEn } from './content/en';
-import type { Lang, LegalDocType, ViewMode, BlogPost } from './types';
+import type { Lang, LegalDocType, ViewMode, BlogPost, AccessibilitySettings } from './types';
 import { Heart } from 'lucide-react';
+
+const defaultA11ySettings: AccessibilitySettings = {
+  fontSize: 'normal',
+  highContrast: false,
+  dyslexiaFont: false,
+  highlightLinks: false,
+  reduceMotion: false,
+  textSpacing: false,
+  readingGuide: false,
+};
 
 export function App() {
   const [lang, setLang] = useState<Lang>('es');
   const [currentView, setCurrentView] = useState<ViewMode>('home');
   const [activeLegalDoc, setActiveLegalDoc] = useState<LegalDocType>(null);
   const [contactInitialMessage, setContactInitialMessage] = useState<string>('');
+  const [isA11yOpen, setIsA11yOpen] = useState(false);
+  const [guideY, setGuideY] = useState<number>(0);
+
+  // Accessibility settings with LocalStorage persistence
+  const [a11ySettings, setA11ySettings] = useState<AccessibilitySettings>(() => {
+    try {
+      const saved = localStorage.getItem('lm_a11y_settings');
+      if (saved) {
+        return { ...defaultA11ySettings, ...JSON.parse(saved) };
+      }
+    } catch {
+      // Fallback
+    }
+    return defaultA11ySettings;
+  });
+
+  // Apply accessibility settings directly to the document root element
+  useEffect(() => {
+    const root = document.documentElement;
+
+    // Font size
+    root.classList.remove('a11y-font-large', 'a11y-font-xlarge');
+    if (a11ySettings.fontSize === 'large') root.classList.add('a11y-font-large');
+    if (a11ySettings.fontSize === 'xlarge') root.classList.add('a11y-font-xlarge');
+
+    // High contrast
+    root.classList.toggle('a11y-high-contrast', a11ySettings.highContrast);
+
+    // Dyslexia font
+    root.classList.toggle('a11y-dyslexic-font', a11ySettings.dyslexiaFont);
+
+    // Text spacing
+    root.classList.toggle('a11y-text-spacing', a11ySettings.textSpacing);
+
+    // Highlight links
+    root.classList.toggle('a11y-highlight-links', a11ySettings.highlightLinks);
+
+    // Reduce motion
+    root.classList.toggle('a11y-reduce-motion', a11ySettings.reduceMotion);
+
+    try {
+      localStorage.setItem('lm_a11y_settings', JSON.stringify(a11ySettings));
+    } catch {
+      // Fallback
+    }
+  }, [a11ySettings]);
+
+  // Pointer tracking for reading guide
+  useEffect(() => {
+    if (!a11ySettings.readingGuide) return;
+
+    const handlePointerMove = (e: MouseEvent) => {
+      setGuideY(e.clientY);
+    };
+
+    window.addEventListener('mousemove', handlePointerMove);
+    return () => window.removeEventListener('mousemove', handlePointerMove);
+  }, [a11ySettings.readingGuide]);
+
+  const handleUpdateA11y = (newPartial: Partial<AccessibilitySettings>) => {
+    setA11ySettings((prev) => ({ ...prev, ...newPartial }));
+  };
+
+  const handleResetA11y = () => {
+    setA11ySettings(defaultA11ySettings);
+  };
 
   // Blog posts with LocalStorage persistence for user-created posts
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>(() => {
@@ -135,6 +212,7 @@ export function App() {
         currentView={currentView}
         onToggleLang={handleToggleLang}
         onNavigate={handleSetView}
+        onOpenAccessibility={() => setIsA11yOpen(true)}
       />
 
       {/* Main View Router */}
@@ -277,12 +355,32 @@ export function App() {
 
       </main>
 
+      {/* Reading Guide Ruler Line */}
+      {a11ySettings.readingGuide && (
+        <div
+          className="a11y-reading-guide-line"
+          style={{ top: `${guideY}px` }}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Footer */}
       <Footer
         content={currentContent.footer}
         onOpenDoc={(doc) => setActiveLegalDoc(doc)}
         onNavigate={handleSetView}
         onOpenAdmin={() => handleSetView('admin')}
+      />
+
+      {/* Accessibility Adaptive Settings Modal */}
+      <AccessibilityModal
+        isOpen={isA11yOpen}
+        onClose={() => setIsA11yOpen(false)}
+        settings={a11ySettings}
+        onUpdateSettings={handleUpdateA11y}
+        onResetSettings={handleResetA11y}
+        lang={lang}
+        onOpenDoc={(doc) => setActiveLegalDoc(doc)}
       />
 
       {/* Cookie Banner */}

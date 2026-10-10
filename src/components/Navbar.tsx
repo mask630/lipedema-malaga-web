@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Heart, ArrowRight } from 'lucide-react';
+import { Menu, X, Heart, ArrowRight, Accessibility } from 'lucide-react';
 import type { Lang, ViewMode } from '../types';
 import type { ContentSchema } from '../content/types';
 
@@ -9,6 +9,7 @@ interface NavbarProps {
   currentView: ViewMode;
   onToggleLang: (newLang: Lang) => void;
   onNavigate: (view: ViewMode) => void;
+  onOpenAccessibility: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -17,6 +18,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   currentView,
   onToggleLang,
   onNavigate,
+  onOpenAccessibility,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -104,14 +106,25 @@ export const Navbar: React.FC<NavbarProps> = ({
               ))}
             </nav>
 
-            {/* Right Actions: Language Switcher & Menu Button */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            {/* Right Actions: Accessibility, Language Switcher & Menu Button */}
+            <div className="flex items-center gap-2 sm:gap-2.5">
               
+              {/* Accessibility Button */}
+              <button
+                onClick={onOpenAccessibility}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-full border border-[#D8C7BA] bg-white/80 hover:bg-white text-[#5A4640] hover:text-[#9B5347] shadow-2xs text-xs font-semibold transition-all cursor-pointer group"
+                aria-label={lang === 'es' ? 'Ajustes de accesibilidad' : 'Accessibility settings'}
+                title={lang === 'es' ? 'Ajustes de accesibilidad (letra, contraste, dislexia...)' : 'Accessibility settings (font size, contrast, dyslexia...)'}
+              >
+                <Accessibility className="w-4 h-4 text-[#8A463B] group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">{lang === 'es' ? 'Accesibilidad' : 'A11y'}</span>
+              </button>
+
               {/* Language Switcher */}
               <div className="inline-flex items-center p-1 rounded-full border border-[#D8C7BA] bg-white/80 shadow-2xs text-xs font-semibold">
                 <button
                   onClick={() => onToggleLang('es')}
-                  className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                  className={`px-2 py-1 rounded-full transition-all cursor-pointer ${
                     lang === 'es'
                       ? 'bg-[#3A2421] text-white shadow-xs'
                       : 'text-[#6C5952] hover:text-[#3A2421]'
@@ -122,7 +135,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
                 <button
                   onClick={() => onToggleLang('en')}
-                  className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                  className={`px-2 py-1 rounded-full transition-all cursor-pointer ${
                     lang === 'en'
                       ? 'bg-[#3A2421] text-white shadow-xs'
                       : 'text-[#6C5952] hover:text-[#3A2421]'
@@ -133,14 +146,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </div>
 
-              {/* Universal Menu Button (Visible on mobile/tablet or when user wants drawer) */}
+              {/* Universal Menu Button (Visible on mobile/tablet) */}
               <button
                 onClick={() => setIsMenuOpen(true)}
-                className="inline-flex lg:hidden items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full border border-[#D5C2B2] bg-[#FAF7F2] hover:bg-[#F2E7DC] text-[#3A2421] text-xs sm:text-sm font-semibold transition-all shadow-2xs cursor-pointer group"
+                className="inline-flex lg:hidden items-center gap-2 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full border border-[#D5C2B2] bg-[#FAF7F2] hover:bg-[#F2E7DC] text-[#3A2421] text-xs sm:text-sm font-semibold transition-all shadow-2xs cursor-pointer group"
                 aria-label="Abrir menú"
               >
                 <Menu className="w-4 h-4 text-[#8A463B] group-hover:rotate-90 transition-transform duration-300" />
-                <span>{content.menu}</span>
+                <span className="hidden xs:inline">{content.menu}</span>
               </button>
 
             </div>
@@ -211,6 +224,27 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </button>
                 ))}
               </nav>
+
+              {/* Accessibility Quick Link in Drawer */}
+              <div className="mt-4 pt-4 border-t border-[#E8DCD1]">
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    onOpenAccessibility();
+                  }}
+                  className="w-full text-left p-3 rounded-2xl bg-white/70 hover:bg-white border border-[#D5C2B2] transition-all flex items-center justify-between cursor-pointer group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Accessibility className="w-4 h-4 text-[#8A463B]" />
+                    <span className="text-xs sm:text-sm font-semibold text-[#3A2421] group-hover:text-[#9B5347]">
+                      {lang === 'es' ? 'Ajustes de Accesibilidad' : 'Accessibility Settings'}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-[#F4E8DF] text-[#8A463B]">
+                    WCAG
+                  </span>
+                </button>
+              </div>
             </div>
 
             {/* Drawer Bottom Actions */}

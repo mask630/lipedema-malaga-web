@@ -47,6 +47,7 @@ export const LegalModals: React.FC<LegalModalsProps> = ({
                 {activeDoc === 'privacidad' && 'Política de Privacidad (RGPD)'}
                 {activeDoc === 'cookies' && 'Política de Cookies'}
                 {activeDoc === 'descargo-medico' && 'Descargo de Responsabilidad Médica'}
+                {activeDoc === 'accesibilidad' && 'Declaración de Accesibilidad Universal (WCAG 2.1)'}
               </h3>
               <p className="text-[11px] text-[#826F67] mt-0.5">Lipedema Málaga · lipedemamalaga.org</p>
             </div>
@@ -102,6 +103,16 @@ export const LegalModals: React.FC<LegalModalsProps> = ({
             }`}
           >
             Descargo Médico
+          </button>
+          <button
+            onClick={() => onSelectDoc('accesibilidad')}
+            className={`px-3 py-1.5 rounded-full transition-all cursor-pointer ${
+              activeDoc === 'accesibilidad'
+                ? 'bg-[#36221E] text-white font-semibold'
+                : 'bg-white/80 text-[#5F4E47] hover:bg-white'
+            }`}
+          >
+            Accesibilidad (WCAG)
           </button>
         </div>
 
@@ -241,6 +252,47 @@ export const LegalModals: React.FC<LegalModalsProps> = ({
               <h4 className="font-editorial text-xl font-bold text-[#36221E] pt-2">3. Recomendación Facultativa</h4>
               <p>
                 Te recomendamos encarecidamente que cualquier decisión relativa a tu salud, cambios dietéticos intensivos, prescripción de prendas de compresión de tejido plano o intervenciones quirúrgicas sea evaluada y prescrita por profesionales sanitarios legalmente autorizados.
+              </p>
+            </div>
+          )}
+
+          {/* ACCESIBILIDAD */}
+          {activeDoc === 'accesibilidad' && (
+            <div className="space-y-4">
+              <div className="p-4 rounded-2xl bg-[#F6ECE4] border border-[#E4D1C3] flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-[#8A463B] shrink-0 mt-0.5" />
+                <p className="text-xs text-[#6F473F] font-medium leading-relaxed">
+                  Lipedema Málaga se compromete a garantizar que cualquier persona, independientemente de sus capacidades físicas, sensoriales o cognitivas, pueda acceder a la información y al acompañamiento de forma libre y confortable.
+                </p>
+              </div>
+
+              <h4 className="font-editorial text-xl font-bold text-[#36221E]">1. Estándar de Conformidad (WCAG 2.1 AA)</h4>
+              <p>
+                Este sitio web ha sido diseñado y estructurado siguiendo las Pautas de Accesibilidad para el Contenido Web (WCAG 2.1) en su nivel de conformidad AA, adoptadas por el Consorcio World Wide Web (W3C), así como los requerimientos del Real Decreto 1112/2018 sobre accesibilidad de los sitios web y aplicaciones para dispositivos móviles.
+              </p>
+
+              <h4 className="font-editorial text-xl font-bold text-[#36221E] pt-2">2. Funcionalidades Adaptativas Implementadas</h4>
+              <p>
+                Para facilitar una lectura cómoda y sin barreras, este portal incorpora un <strong>Panel de Adaptabilidad y Accesibilidad</strong> accesible desde la barra superior, con los siguientes ajustes en tiempo real:
+              </p>
+              <ul className="list-disc pl-5 space-y-1.5 text-xs text-[#5F4E47]">
+                <li><strong>Escala de tipografía:</strong> Ampliación del tamaño de letra al 115% y 130% para personas con baja agudeza visual.</li>
+                <li><strong>Modo Alto Contraste:</strong> Fondo oscuro con bordes y tipografías en alto contraste para mejorar la legibilidad.</li>
+                <li><strong>Tipografía para Dislexia:</strong> Conmutador a tipografía hiperlegible sans-serif para reducir la confusión de caracteres.</li>
+                <li><strong>Espaciado tipográfico aumentado:</strong> Mayor interlineado y separación de letras para evitar la fatiga visual.</li>
+                <li><strong>Guía de lectura:</strong> Regla horizontal que asiste en el seguimiento renglón a renglón.</li>
+                <li><strong>Modo Calma:</strong> Supresión de animaciones y transiciones para evitar mareos o sobrecarga sensorial (TDAH, epilepsia fotosensible o migrañas).</li>
+                <li><strong>Resaltado de enlaces:</strong> Subrayado y contorno visual reforzado en todos los elementos interactivos.</li>
+              </ul>
+
+              <h4 className="font-editorial text-xl font-bold text-[#36221E] pt-2">3. Navegación por Teclado y Tecnologías de Asistencia</h4>
+              <p>
+                Todo el sitio web puede ser navegado utilizando exclusivamente el teclado mediante la tecla <code>Tabulador</code> (para avanzar), <code>Shift + Tab</code> (para retroceder), <code>Enter / Espacio</code> (para accionar botones o enlaces) y <code>Escape</code> (para cerrar paneles y ventanas modales). Además, se incorporan atributos ARIA (Accessible Rich Internet Applications) y etiquetas descriptivas para una correcta interpretación por lectores de pantalla (como NVDA, JAWS, VoiceOver o TalkBack).
+              </p>
+
+              <h4 className="font-editorial text-xl font-bold text-[#36221E] pt-2">4. Contacto y Sugerencias de Accesibilidad</h4>
+              <p>
+                La accesibilidad es un proceso de mejora continua. Si experimentas cualquier dificultad de acceso, detectas alguna barrera técnica o necesitas consultar información en un formato alternativo, por favor ponte en contacto con nosotras a través de <strong>info@lipedemamalaga.org</strong>.
               </p>
             </div>
           )}

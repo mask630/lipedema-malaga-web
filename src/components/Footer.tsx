@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, ShieldAlert, ArrowUp, Lock } from 'lucide-react';
+import { Mail, ShieldAlert, ArrowUp, Lock, Accessibility } from 'lucide-react';
 import type { LegalDocType, ViewMode } from '../types';
 import type { ContentSchema } from '../content/types';
 
@@ -172,6 +172,13 @@ export const Footer: React.FC<FooterProps> = ({
               >
                 <ShieldAlert className="w-3.5 h-3.5" />
                 <span>Descargo de Responsabilidad Médica</span>
+              </button>
+              <button
+                onClick={() => onOpenDoc('accesibilidad')}
+                className="text-[#D8C7BF] hover:text-white transition-colors cursor-pointer text-left flex items-center gap-1.5"
+              >
+                <Accessibility className="w-3.5 h-3.5" />
+                <span>Declaración de Accesibilidad (WCAG)</span>
               </button>
             </div>
 

@@ -2,7 +2,17 @@ export type Lang = 'es' | 'en';
 
 export type ViewMode = 'home' | 'que-es' | 'tratamiento' | 'test' | 'contacto' | 'blog' | 'admin';
 
-export type LegalDocType = 'aviso-legal' | 'privacidad' | 'cookies' | 'descargo-medico' | null;
+export type LegalDocType = 'aviso-legal' | 'privacidad' | 'cookies' | 'descargo-medico' | 'accesibilidad' | null;
+
+export interface AccessibilitySettings {
+  fontSize: 'normal' | 'large' | 'xlarge';
+  highContrast: boolean;
+  dyslexiaFont: boolean;
+  highlightLinks: boolean;
+  reduceMotion: boolean;
+  textSpacing: boolean;
+  readingGuide: boolean;
+}
 
 export interface ContactFormData {
   name: string;
