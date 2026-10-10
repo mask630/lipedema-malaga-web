@@ -1,13 +1,12 @@
 import React from 'react';
 import { Mail, ShieldAlert, ArrowUp, Lock } from 'lucide-react';
-import type { LegalDocType } from '../types';
+import type { LegalDocType, ViewMode } from '../types';
 import type { ContentSchema } from '../content/types';
 
 interface FooterProps {
   content: ContentSchema['footer'];
   onOpenDoc: (doc: LegalDocType) => void;
-  onOpenContact: () => void;
-  onOpenBlog?: () => void;
+  onNavigate: (view: ViewMode) => void;
   onOpenAdmin?: () => void;
 }
 
@@ -22,8 +21,7 @@ const InstagramIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
 export const Footer: React.FC<FooterProps> = ({
   content,
   onOpenDoc,
-  onOpenContact,
-  onOpenBlog,
+  onNavigate,
   onOpenAdmin,
 }) => {
   const scrollToTop = () => {
@@ -68,16 +66,21 @@ export const Footer: React.FC<FooterProps> = ({
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-[#412E2A] hover:bg-[#5C3F3A] text-white flex items-center justify-center transition-colors"
                 aria-label="Instagram Lipedema Málaga"
+                title="Síguenos en Instagram @lipedemamalaga"
               >
                 <InstagramIcon className="w-4 h-4" />
               </a>
               <a
                 href="mailto:info@lipedemamalaga.org"
                 className="w-9 h-9 rounded-full bg-[#412E2A] hover:bg-[#5C3F3A] text-white flex items-center justify-center transition-colors"
-                aria-label="Email Lipedema Málaga"
+                aria-label="Email de contacto institucional"
+                title="Contacto institucional: info@lipedemamalaga.org"
               >
                 <Mail className="w-4 h-4" />
               </a>
+              <span className="text-[11px] text-[#A8938A]">
+                info@lipedemamalaga.org
+              </span>
             </div>
           </div>
 
@@ -88,13 +91,40 @@ export const Footer: React.FC<FooterProps> = ({
             </h4>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li>
-                <a href="#inicio" className="hover:text-white transition-colors">
+                <button
+                  onClick={() => onNavigate('home')}
+                  className="hover:text-white transition-colors cursor-pointer text-left"
+                >
                   Inicio
-                </a>
+                </button>
               </li>
               <li>
                 <button
-                  onClick={onOpenBlog}
+                  onClick={() => onNavigate('que-es')}
+                  className="hover:text-white transition-colors cursor-pointer text-left"
+                >
+                  ¿Qué es el Lipedema?
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onNavigate('tratamiento')}
+                  className="hover:text-white transition-colors cursor-pointer text-left"
+                >
+                  Tratamientos y Cuidados
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onNavigate('test')}
+                  className="hover:text-white transition-colors cursor-pointer text-left"
+                >
+                  Test de Autoevaluación
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onNavigate('blog')}
                   className="hover:text-white transition-colors cursor-pointer text-left flex items-center gap-1.5"
                 >
                   <span>Blog & Anécdotas</span>
@@ -102,36 +132,11 @@ export const Footer: React.FC<FooterProps> = ({
                 </button>
               </li>
               <li>
-                <a href="#que-es-el-lipedema" className="hover:text-white transition-colors">
-                  ¿Qué es el Lipedema?
-                </a>
-              </li>
-              <li>
-                <a href="#tratamiento-conservador" className="hover:text-white transition-colors">
-                  Tratamiento Conservador
-                </a>
-              </li>
-              <li>
-                <a href="#cirugia-postoperatorio" className="hover:text-white transition-colors">
-                  Cirugía y Postoperatorio
-                </a>
-              </li>
-              <li>
-                <a href="#test-orientativo" className="hover:text-white transition-colors">
-                  Test de Autoevaluación
-                </a>
-              </li>
-              <li>
-                <a href="#quienes-somos" className="hover:text-white transition-colors">
-                  Quiénes Somos
-                </a>
-              </li>
-              <li>
                 <button
-                  onClick={onOpenContact}
-                  className="hover:text-white transition-colors cursor-pointer text-left"
+                  onClick={() => onNavigate('contacto')}
+                  className="text-[#E7B8B1] hover:text-white transition-colors cursor-pointer text-left font-semibold"
                 >
-                  Contacta con nosotras
+                  Ficha de Consulta Gratuita
                 </button>
               </li>
             </ul>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Heart, CheckCircle2, Send, Lock, Copy, Check, ExternalLink } from 'lucide-react';
+import { HeartHandshake, Heart, CheckCircle2, Send, Lock, Copy, Check, ExternalLink } from 'lucide-react';
 import type { ContactFormData } from '../types';
 import type { ContentSchema } from '../content/types';
 
@@ -171,23 +171,17 @@ DESTINO: info@lipedemamalaga.org
               </div>
             </div>
 
-            {/* Direct Email Box */}
+            {/* Explanation why the form is essential */}
             <div className="p-6 rounded-3xl bg-[#F4EBE2] border border-[#DECFBF]">
-              <p className="text-xs font-bold text-[#7E4237] uppercase tracking-wider mb-2">
-                {content.directTitle}
-              </p>
-              <div className="space-y-2 text-sm">
-                <a
-                  href="mailto:info@lipedemamalaga.org"
-                  className="flex items-center gap-3 text-[#4A3933] hover:text-[#8A463B] transition-colors"
-                >
-                  <Mail className="w-4 h-4 text-[#8A463B]" />
-                  <span className="font-medium">info@lipedemamalaga.org</span>
-                </a>
-                <p className="text-xs text-[#7D6B64] pt-1">
-                  Revisamos los correos diariamente con total dedicación.
+              <div className="flex items-center gap-2 mb-2">
+                <HeartHandshake className="w-4 h-4 text-[#8A463B]" />
+                <p className="text-xs font-bold text-[#7E4237] uppercase tracking-wider">
+                  {content.directTitle}
                 </p>
               </div>
+              <p className="text-xs sm:text-sm text-[#67544C] leading-relaxed">
+                {content.directDesc}
+              </p>
             </div>
 
           </div>

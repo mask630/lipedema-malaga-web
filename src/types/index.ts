@@ -1,6 +1,6 @@
 export type Lang = 'es' | 'en';
 
-export type ViewMode = 'home' | 'blog' | 'admin';
+export type ViewMode = 'home' | 'que-es' | 'tratamiento' | 'test' | 'contacto' | 'blog' | 'admin';
 
 export type LegalDocType = 'aviso-legal' | 'privacidad' | 'cookies' | 'descargo-medico' | null;
 

@@ -371,10 +371,12 @@ export const contentEs: ContentSchema = {
     cardPrivacyDesc: 'Tratamos tus datos exclusivamente para atender tu consulta conforme al RGPD.',
     cardFreeTitle: 'Sin Coste Alguno',
     cardFreeDesc: 'La atención, orientación y escucha es 100% gratuita para ti.',
-    directTitle: 'Vías directas de contacto',
-    formTitle: 'Ficha de Consulta',
+    directTitle: 'Atención personalizada y ordenada',
+    directDesc:
+      'Para que una compañera voluntaria te responda con rigor, cada consulta se organiza en una ficha estructurada con tus dudas y tu momento actual.',
+    formTitle: 'Ficha de Consulta y Acompañamiento',
     formSubtitle:
-      'Completa los datos para estructurar tu consulta y archivarte en nuestra base de atención.',
+      'Completa los datos para estructurar tu consulta y asignarte una respuesta personalizada.',
     fields: {
       name: 'Nombre o Alias',
       namePlaceholder: 'Ej. María',

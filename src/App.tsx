@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { HomePathways } from './components/HomePathways';
+import { SubpageHeader } from './components/SubpageHeader';
 import { WhatIsLipedema } from './components/WhatIsLipedema';
 import { ConservativeTreatment } from './components/ConservativeTreatment';
 import { SurgeryAndPostop } from './components/SurgeryAndPostop';
@@ -30,7 +32,6 @@ export function App() {
       const saved = localStorage.getItem('lm_custom_blog_posts');
       if (saved) {
         const customPosts: BlogPost[] = JSON.parse(saved);
-        // Combine initial with custom, avoiding duplicate IDs
         const initialIds = new Set(initialBlogPosts.map((p) => p.id));
         const filteredCustom = customPosts.filter((p) => !initialIds.has(p.id));
         return [...filteredCustom, ...initialBlogPosts];
@@ -49,11 +50,10 @@ export function App() {
       setLang('en');
     }
 
-    const viewParam = params.get('view');
-    if (viewParam === 'blog') {
-      setCurrentView('blog');
-    } else if (viewParam === 'admin') {
-      setCurrentView('admin');
+    const viewParam = params.get('view') as ViewMode | null;
+    const validViews: ViewMode[] = ['home', 'que-es', 'tratamiento', 'test', 'contacto', 'blog', 'admin'];
+    if (viewParam && validViews.includes(viewParam)) {
+      setCurrentView(viewParam);
     }
   }, []);
 
@@ -98,7 +98,7 @@ export function App() {
         const customPosts = updated.filter((p) => p.isCustom);
         localStorage.setItem('lm_custom_blog_posts', JSON.stringify(customPosts));
       } catch {
-        // Local storage full or private mode
+        // Fallback
       }
       return updated;
     });
@@ -120,63 +120,130 @@ export function App() {
   const currentContent = lang === 'en' ? contentEn : contentEs;
 
   const handleOpenContact = (customMessage?: string) => {
-    if (currentView !== 'home') {
-      setCurrentView('home');
-      updateUrl('home', lang);
-    }
     if (customMessage) {
       setContactInitialMessage(customMessage);
     }
-    setTimeout(() => {
-      const contactElem = document.getElementById('contacta-con-nosotros');
-      if (contactElem) {
-        contactElem.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
+    handleSetView('contacto');
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-[#2D2421] selection:bg-[#EAD8D1] selection:text-[#3D2520]">
-      {/* Top Clean Navbar */}
+      {/* Universal Responsive Navbar */}
       <Navbar
         content={currentContent.nav}
         lang={lang}
         currentView={currentView}
         onToggleLang={handleToggleLang}
-        onOpenContact={() => handleOpenContact()}
-        onOpenBlog={() => handleSetView('blog')}
-        onGoHome={() => handleSetView('home')}
+        onNavigate={handleSetView}
       />
 
       {/* Main View Router */}
       <main className="flex-1">
+        
+        {/* VIEW 1: HOME (Limpio, cálido y sin sobrecarga cognitiva) */}
         {currentView === 'home' && (
           <>
             <Hero
               content={currentContent.hero}
-              onOpenContact={() => handleOpenContact()}
+              onOpenContact={() => handleSetView('contacto')}
+              onOpenTest={() => handleSetView('test')}
+            />
+
+            {/* 3 Guided Pathways: Elegir qué leer sin agobios */}
+            <HomePathways
+              lang={lang}
+              onNavigate={handleSetView}
+            />
+
+            {/* About us / Nuestra misión */}
+            <AboutUs
+              content={currentContent.about}
+              onOpenContact={() => handleSetView('contacto')}
+            />
+          </>
+        )}
+
+        {/* VIEW 2: ¿QUÉ ES EL LIPEDEMA? (Página dedicada) */}
+        {currentView === 'que-es' && (
+          <div className="animate-fadeIn">
+            <SubpageHeader
+              title={lang === 'es' ? '¿Qué es el Lipedema?' : 'What is Lipedema?'}
+              subtitle={currentContent.whatIs.subtitle}
+              lang={lang}
+              onGoHome={() => handleSetView('home')}
             />
 
             <WhatIsLipedema content={currentContent.whatIs} />
 
+            {/* Bottom Reassurance Banner */}
+            <div className="py-14 bg-[#FAF7F2] border-t border-[#ECE2D8]">
+              <div className="max-w-4xl mx-auto px-4 text-center">
+                <h3 className="font-editorial text-2xl sm:text-3xl font-bold text-[#36221E] mb-3">
+                  {lang === 'es' ? '¿Reconoces estos síntomas en tu día a día?' : 'Do you recognize these symptoms in your daily life?'}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#66544D] mb-6 max-w-xl mx-auto leading-relaxed">
+                  {lang === 'es'
+                    ? 'No tienes que llevar este proceso a solas. Podemos escucharte y orientarte de forma 100% gratuita y sin compromiso.'
+                    : 'You do not have to carry this journey alone. We can listen to you and guide you 100% free of charge.'}
+                </p>
+                <button
+                  onClick={() => handleSetView('contacto')}
+                  className="px-8 py-3.5 rounded-full bg-[#9B5347] hover:bg-[#864439] text-white text-xs sm:text-sm font-semibold transition-all shadow-sm hover:shadow-md cursor-pointer"
+                >
+                  {lang === 'es' ? 'Rellenar Ficha de Consulta' : 'Open Consultation Sheet'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 3: TRATAMIENTO Y CUIDADOS (Página dedicada) */}
+        {currentView === 'tratamiento' && (
+          <div className="animate-fadeIn">
+            <SubpageHeader
+              title={lang === 'es' ? 'Tratamientos y Cuidados' : 'Treatments & Care'}
+              subtitle={currentContent.treatment.subtitle}
+              lang={lang}
+              onGoHome={() => handleSetView('home')}
+            />
+
             <ConservativeTreatment
               content={currentContent.treatment}
-              onOpenContact={() => handleOpenContact()}
+              onOpenContact={() => handleSetView('contacto')}
             />
 
             <SurgeryAndPostop
               content={currentContent.surgery}
-              onOpenContact={() => handleOpenContact()}
+              onOpenContact={() => handleSetView('contacto')}
+            />
+          </div>
+        )}
+
+        {/* VIEW 4: TEST ORIENTATIVO (Página dedicada a pantalla limpia) */}
+        {currentView === 'test' && (
+          <div className="animate-fadeIn">
+            <SubpageHeader
+              title={currentContent.quiz.title}
+              subtitle={currentContent.quiz.subtitle}
+              lang={lang}
+              onGoHome={() => handleSetView('home')}
             />
 
             <SelfAssessmentQuiz
               content={currentContent.quiz}
               onOpenContact={(msg) => handleOpenContact(msg)}
             />
+          </div>
+        )}
 
-            <AboutUs
-              content={currentContent.about}
-              onOpenContact={() => handleOpenContact()}
+        {/* VIEW 5: FICHA DE CONSULTA (Página dedicada prioritaria) */}
+        {currentView === 'contacto' && (
+          <div className="animate-fadeIn">
+            <SubpageHeader
+              title={currentContent.contact.title}
+              subtitle={currentContent.contact.subtitle}
+              lang={lang}
+              onGoHome={() => handleSetView('home')}
             />
 
             <ContactSection
@@ -184,9 +251,10 @@ export function App() {
               initialMessage={contactInitialMessage}
               onOpenPrivacy={() => setActiveLegalDoc('privacidad')}
             />
-          </>
+          </div>
         )}
 
+        {/* VIEW 6: BLOG & ANÉCDOTAS */}
         {currentView === 'blog' && (
           <BlogView
             posts={blogPosts}
@@ -197,6 +265,7 @@ export function App() {
           />
         )}
 
+        {/* VIEW 7: ADMINISTRACIÓN DEL BLOG */}
         {currentView === 'admin' && (
           <BlogAdmin
             posts={blogPosts}
@@ -205,14 +274,14 @@ export function App() {
             onClose={() => handleSetView('blog')}
           />
         )}
+
       </main>
 
       {/* Footer */}
       <Footer
         content={currentContent.footer}
         onOpenDoc={(doc) => setActiveLegalDoc(doc)}
-        onOpenContact={() => handleOpenContact()}
-        onOpenBlog={() => handleSetView('blog')}
+        onNavigate={handleSetView}
         onOpenAdmin={() => handleSetView('admin')}
       />
 
@@ -226,16 +295,17 @@ export function App() {
         onSelectDoc={(doc) => setActiveLegalDoc(doc)}
       />
 
-      {/* Floating Quick Action Button */}
-      {currentView === 'home' && (
+      {/* Floating Action Button (Except on Consultation or Admin screens) */}
+      {currentView !== 'contacto' && currentView !== 'admin' && (
         <button
-          onClick={() => handleOpenContact()}
+          onClick={() => handleSetView('contacto')}
           className="fixed bottom-6 right-6 z-30 p-3.5 sm:px-5 sm:py-3.5 rounded-full bg-[#9B5347] hover:bg-[#864439] text-white shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center gap-2 group cursor-pointer border border-[#B66B5F]/40 hover:scale-105 active:scale-95"
-          aria-label="Ayuda gratuita"
+          aria-label="Ficha de consulta gratuita"
+          title="Ficha de consulta gratuita"
         >
           <Heart className="w-5 h-5 text-[#FEE9E6] fill-current group-hover:scale-110 transition-transform" />
           <span className="hidden sm:inline text-sm font-semibold tracking-wide">
-            {currentContent.nav.freeHelp}
+            {lang === 'es' ? 'Ficha de Consulta' : 'Consultation Sheet'}
           </span>
         </button>
       )}

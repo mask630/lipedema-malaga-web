@@ -371,10 +371,12 @@ export const contentEn: ContentSchema = {
     cardPrivacyDesc: 'We handle your details strictly to answer your inquiry in full compliance with GDPR.',
     cardFreeTitle: 'Zero Cost',
     cardFreeDesc: 'All our listening and guidance is 100% free of charge for you.',
-    directTitle: 'Direct communication channels',
+    directTitle: 'Personalized & structured guidance',
+    directDesc:
+      'To provide thorough and careful guidance, each inquiry is organized into a structured case sheet detailing your current stage and questions.',
     formTitle: 'Inquiry & Case Sheet',
     formSubtitle:
-      'Please fill out your details so your inquiry is organized and archived in our support registry.',
+      'Please fill out your details so your inquiry is organized and reviewed by a peer volunteer.',
     fields: {
       name: 'Name or Alias',
       namePlaceholder: 'E.g. Sarah',

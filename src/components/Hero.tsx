@@ -5,9 +5,10 @@ import type { ContentSchema } from '../content/types';
 interface HeroProps {
   content: ContentSchema['hero'];
   onOpenContact: () => void;
+  onOpenTest?: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ content, onOpenContact }) => {
+export const Hero: React.FC<HeroProps> = ({ content, onOpenContact, onOpenTest }) => {
   return (
     <section id="inicio" className="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden">
       {/* Background ambient glow */}
@@ -41,13 +42,13 @@ export const Hero: React.FC<HeroProps> = ({ content, onOpenContact }) => {
                 <span>{content.ctaPrimary}</span>
               </button>
               
-              <a
-                href="#test-orientativo"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-[#D5C2B2] bg-white/70 hover:bg-white text-[#4A3B36] font-medium text-base shadow-2xs hover:shadow-xs transition-all"
+              <button
+                onClick={onOpenTest ? onOpenTest : onOpenContact}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-[#D5C2B2] bg-white/70 hover:bg-white text-[#4A3B36] font-medium text-base shadow-2xs hover:shadow-xs transition-all cursor-pointer"
               >
                 <span>{content.ctaSecondary}</span>
                 <ArrowRight className="w-4 h-4 text-[#8A463B]" />
-              </a>
+              </button>
             </div>
 
             {/* 3 Trust Pillars (Clean & Human) */}

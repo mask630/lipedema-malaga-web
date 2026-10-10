@@ -183,6 +183,7 @@ export interface ContentSchema {
     cardFreeTitle: string;
     cardFreeDesc: string;
     directTitle: string;
+    directDesc: string;
     formTitle: string;
     formSubtitle: string;
     fields: {

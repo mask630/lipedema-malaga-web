@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Heart, ArrowRight, BookOpen } from 'lucide-react';
+import { Menu, X, Heart, ArrowRight } from 'lucide-react';
 import type { Lang, ViewMode } from '../types';
 import type { ContentSchema } from '../content/types';
 
@@ -8,9 +8,7 @@ interface NavbarProps {
   lang: Lang;
   currentView: ViewMode;
   onToggleLang: (newLang: Lang) => void;
-  onOpenContact: () => void;
-  onOpenBlog: () => void;
-  onGoHome: () => void;
+  onNavigate: (view: ViewMode) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -18,9 +16,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   lang,
   currentView,
   onToggleLang,
-  onOpenContact,
-  onOpenBlog,
-  onGoHome,
+  onNavigate,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -33,15 +29,13 @@ export const Navbar: React.FC<NavbarProps> = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { label: content.links.home, href: '#inicio', desc: 'Presentación y bienvenida', action: onGoHome },
-    { label: content.links.blog, href: '#blog', desc: 'Anécdotas reales, trucos y experiencias', action: onOpenBlog, badge: 'Nuevo' },
-    { label: content.links.whatIs, href: '#que-es-el-lipedema', desc: 'Definición, síntomas y comparativa', action: onGoHome },
-    { label: content.links.treatment, href: '#tratamiento-conservador', desc: 'Nutrición, fisio DLM, compresión y apoyo', action: onGoHome },
-    { label: content.links.surgery, href: '#cirugia-postoperatorio', desc: 'Técnica quirúrgica y postoperatorio', action: onGoHome },
-    { label: content.links.quiz, href: '#test-orientativo', desc: 'Cuestionario de 5 preguntas', action: onGoHome },
-    { label: content.links.about, href: '#quienes-somos', desc: 'Nuestra vocación de apoyo mutuo', action: onGoHome },
-    { label: content.links.contact, href: '#contacta-con-nosotros', desc: 'Formulario de orientación personalizada', action: onGoHome },
+  const navLinks: Array<{ label: string; view: ViewMode; desc: string; badge?: string }> = [
+    { label: content.links.home, view: 'home', desc: 'Presentación y bienvenida' },
+    { label: content.links.whatIs, view: 'que-es', desc: 'Definición, síntomas, 4 grados y tipos' },
+    { label: content.links.treatment, view: 'tratamiento', desc: 'Nutrición, DLM, compresión y cirugía' },
+    { label: content.links.quiz, view: 'test', desc: 'Cuestionario guiado de 5 preguntas' },
+    { label: content.links.blog, view: 'blog', desc: 'Anécdotas reales, trucos y experiencias', badge: 'Nuevo' },
+    { label: content.links.contact, view: 'contacto', desc: 'Ficha de consulta y acompañamiento' },
   ];
 
   return (
@@ -56,14 +50,14 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             
-            {/* Logo and Brand Title (Clicking returns to Home or toggles menu) */}
+            {/* Logo and Brand Title (Clicking returns to Home or toggles menu on mobile) */}
             <div className="flex items-center gap-3">
               <button
                 onClick={() => {
-                  if (window.innerWidth < 768) {
+                  if (window.innerWidth < 1024) {
                     setIsMenuOpen((prev) => !prev);
                   } else {
-                    onGoHome();
+                    onNavigate('home');
                   }
                 }}
                 className="flex items-center gap-3 text-left group cursor-pointer"
@@ -88,24 +82,31 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             </div>
 
-            {/* Right Actions: Direct Blog, Language Switcher & Clean Menu Button */}
+            {/* Desktop Navigation Tabs */}
+            <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
+              {navLinks.map((item) => (
+                <button
+                  key={item.view}
+                  onClick={() => onNavigate(item.view)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    currentView === item.view
+                      ? 'bg-[#3A2421] text-white shadow-xs'
+                      : 'text-[#5B4842] hover:text-[#9B5347] hover:bg-white/70'
+                  }`}
+                >
+                  <span>{item.label}</span>
+                  {item.badge && (
+                    <span className="ml-1 text-[9px] font-bold uppercase px-1.5 py-0.2 rounded bg-[#F4E8DF] text-[#8A463B]">
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </nav>
+
+            {/* Right Actions: Language Switcher & Menu Button */}
             <div className="flex items-center gap-2 sm:gap-3">
               
-              {/* Direct Blog Link Button */}
-              <button
-                onClick={onOpenBlog}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full text-xs font-semibold transition-all cursor-pointer border ${
-                  currentView === 'blog'
-                    ? 'bg-[#3A2421] text-white border-[#3A2421] shadow-xs'
-                    : 'bg-white/80 border-[#D8C7BA] text-[#5A4640] hover:bg-white hover:text-[#9B5347]'
-                }`}
-                title="Leer anécdotas y artículos"
-              >
-                <BookOpen className="w-3.5 h-3.5 text-[#9B5347]" />
-                <span className="hidden xs:inline">{content.links.blog}</span>
-                <span className="xs:hidden">Blog</span>
-              </button>
-
               {/* Language Switcher */}
               <div className="inline-flex items-center p-1 rounded-full border border-[#D8C7BA] bg-white/80 shadow-2xs text-xs font-semibold">
                 <button
@@ -132,10 +133,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </div>
 
-              {/* Universal Menu Button */}
+              {/* Universal Menu Button (Visible on mobile/tablet or when user wants drawer) */}
               <button
                 onClick={() => setIsMenuOpen(true)}
-                className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full border border-[#D5C2B2] bg-[#FAF7F2] hover:bg-[#F2E7DC] text-[#3A2421] text-xs sm:text-sm font-semibold transition-all shadow-2xs cursor-pointer group"
+                className="inline-flex lg:hidden items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full border border-[#D5C2B2] bg-[#FAF7F2] hover:bg-[#F2E7DC] text-[#3A2421] text-xs sm:text-sm font-semibold transition-all shadow-2xs cursor-pointer group"
                 aria-label="Abrir menú"
               >
                 <Menu className="w-4 h-4 text-[#8A463B] group-hover:rotate-90 transition-transform duration-300" />
@@ -148,7 +149,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </header>
 
-      {/* Relaxed Full Navigation Overlay Drawer */}
+      {/* Relaxed Navigation Drawer for Mobile/Tablet */}
       {isMenuOpen && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/45 backdrop-blur-xs animate-fadeIn">
           
@@ -178,15 +179,18 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               {/* Navigation Items */}
               <nav className="space-y-2">
-                {navLinks.map((item, idx) => (
-                  <a
-                    key={idx}
-                    href={item.href}
+                {navLinks.map((item) => (
+                  <button
+                    key={item.view}
                     onClick={() => {
                       setIsMenuOpen(false);
-                      if (item.action) item.action();
+                      onNavigate(item.view);
                     }}
-                    className="block p-3.5 rounded-2xl hover:bg-white hover:shadow-xs border border-transparent hover:border-[#E8DCD1] transition-all group"
+                    className={`w-full text-left p-3.5 rounded-2xl border transition-all group cursor-pointer ${
+                      currentView === item.view
+                        ? 'bg-white border-[#9B5347] shadow-xs'
+                        : 'hover:bg-white hover:shadow-2xs border-transparent hover:border-[#E8DCD1]'
+                    }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -204,7 +208,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <p className="text-xs text-[#7B6861] mt-0.5">
                       {item.desc}
                     </p>
-                  </a>
+                  </button>
                 ))}
               </nav>
             </div>
@@ -215,12 +219,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
-                  onOpenContact();
+                  onNavigate('contacto');
                 }}
                 className="w-full py-3.5 px-5 rounded-full bg-[#9B5347] hover:bg-[#864439] text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-md cursor-pointer"
               >
                 <Heart className="w-4 h-4 fill-current text-[#FDEBE8]" />
-                <span>{content.freeHelp}</span>
+                <span>{content.links.contact}</span>
               </button>
 
               <div className="flex items-center justify-between text-xs text-[#7B6861] pt-2 px-1">
@@ -232,7 +236,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   @lipedemamalaga
                 </a>
-                <span>info@lipedemamalaga.org</span>
+                <span>lipedemamalaga.org</span>
               </div>
 
             </div>
